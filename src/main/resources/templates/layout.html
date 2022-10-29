@@ -1,0 +1,29 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block layout:insert="~{fragments/head-css}" />
+
+<body style>
+    <header id="header">
+        <th:block layout:replace="~{fragments/header-middle}" />
+        <th:block layout:replace="~{fragments/header-bottom}" />
+    </header>
+
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-3">
+                    <!-- <th:block th:if="${isHome}"> -->
+                    <th:block layout:replace="~{fragments/sidebar}" />
+                    <!-- </th:block> -->
+                </div>
+                <div class="col-sm-9 padding-right">
+                    <th:block layout:fragment="content" />
+                </div>
+            </div>
+        </div>
+    </section>
+    <th:block layout:replace="~{fragments/footer}" />
+    <th:block layout:insert="~{fragments/body-script :: end}" />
+
+</body>
+
+</html>
