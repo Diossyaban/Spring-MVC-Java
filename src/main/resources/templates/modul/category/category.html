@@ -1,4 +1,47 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:with="http://www.thymeleaf.org/extras/with" layout:decorate="~{layout}" with:title="jbootcamp">
 <th:block layout:fragment="content">
-    <h1>List Category</h1>
+    <section id="cart_items">
+        <div class="container">
+            <div class="breadcrumbs">
+                <ol class="breadcrumb">
+                    <li><a href="/">Home</a></li>
+                    <li class="active">Category</li>
+                </ol>
+            </div>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li><a th:href="@{/category/add}"><i class="fa fa-plus"></i> Add</a></li>
+            </ul>
+            <div class="table-responsive cart_info">
+                <h7 th:text="${message}" class="text-info"></h7>
+                <table class="table table-condensed">
+                    <thead>
+                        <tr class="cart_menu">
+                            <td class="description">Category Id</td>
+                            <td class="description">Category Name</td>
+                            <td><i class="fa fa-edit"></i></td>
+                            <td><i class="fa fa-times"></i></td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="cate : ${categories}">
+                            <td class="description">
+                                <p th:text="${cate.cateId}"></p>
+                            </td>
+                            <td class="description">
+                                <p th:text="${cate.cateName}"></p>
+                            </td>
+                            <td class="cart_edit">
+                                <a class="cart_quantity_delete" th:href="@{edit/{id}(id=${cate.cateId})}"><i class="fa fa-edit"></i></a>
+                            </td>
+                            <td class="cart_delete">
+                                <a class="cart_quantity_delete" th:href="@{delete/{id}(id=${cate.cateId})}"><i class="fa fa-times"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
 </th:block>

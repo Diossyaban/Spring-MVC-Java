@@ -11,11 +11,11 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-3">
-                    <!-- <th:block th:if="${isHome}"> -->
-                    <th:block layout:replace="~{fragments/sidebar}" />
-                    <!-- </th:block> -->
+                    <th:block th:if="${isHome}">
+                        <th:block layout:replace="~{fragments/sidebar}" />
+                    </th:block>
                 </div>
-                <div class="col-sm-9 padding-right">
+                <div th:class="${isHome} ? 'col-sm-9 padding-right' : 'col-sm-12 padding-right'">
                     <th:block layout:fragment="content" />
                 </div>
             </div>

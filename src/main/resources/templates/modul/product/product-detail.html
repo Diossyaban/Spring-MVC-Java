@@ -1,0 +1,72 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:with="http://www.thymeleaf.org/extras/with" layout:decorate="~{layout}" with:title="'jbootcamp'">
+<th:block layout:fragment="content">
+
+    <div class="breadcrumbs">
+        <ol class="breadcrumb">
+            <li><a href="/">Home</a></li>
+            <li><a href="/">Product</a></li>
+            <li class="active">Product Detail</li>
+        </ol>
+
+    </div>
+
+    <div class="product-details" th:each="prod: ${productDetail}">
+        <!--product-details-->
+        <div class="col-sm-5">
+            <div class="view-product">
+                <img th:src="@{/product/files/{filename}(filename=${prod.productImage})}" style="height: 387px;width:100%" alt="">
+                <h3>ZOOM</h3>
+            </div>
+            <div id="similar-product" class="carousel slide" data-ride="carousel">
+
+
+
+                <!-- Controls -->
+                <a class="left item-control" href="#similar-product" data-slide="prev">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                <a class="right item-control" href="#similar-product" data-slide="next">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+
+        </div>
+        <div class="col-sm-7">
+            <div class="product-information">
+
+                <!--/product-information-->
+                <img th:src="@{/eshop/images/product-details/new.jpg}" class="newarrival" alt="">
+                <h2 th:text="${prod.title}">Anne Klein Sleeveless Colorblock Scuba</h2>
+                <p th:text="${prod.description}">Web ID: 1089772</p>
+                <img th:src="@{/eshop/images/product-details/rating.png}" alt="">
+
+                <form method="post" th:action="@{/cart/add}" th:object="${productDto}">
+                    <span>
+        <span style="font-size: 1.9rem;" th:text="Rp.+ ${#numbers.formatDecimal(prod.price,1, 'DEFAULT', 0, 'DEFAULT')}">US $59</span>
+                    <label>Quantity:</label>
+
+                    <input type="text" value="1" name="quantity">
+                    <input type="hidden" th:value="${prod.title}" name="name">
+                    <input type="hidden" th:value="${prod.price}" name="price">
+                    <input type="hidden" th:value="${prod.prodId}" name="productId">
+
+                    <button type="submit" class="btn btn-fefault cart">
+          <i class="fa fa-shopping-cart"></i>
+          Add to cart
+        </button>
+                </form>
+                <h7 th:text="${message}" class="text-info"></h7>
+                </span>
+                <p><b>In Stock: </b> <span th:text="${prod.stock}"> </p>
+      <p><b>Condition: </b><span th:text="${prod.conditionType}"></span></p>
+                <p><b>Brand: </b> <span th:text="${prod.manufacture}"></p>
+      <a href=""><img th:src="@{/eshop/images/product-details/share.png}" class="share img-responsive" alt=""></a>
+    </div>
+   <!--  <a th:href="@{/cart/cartlist}">ResponseBody</a> -->
+    <!--/product-information-->
+  </div>
+</div>
+
+
+
+</th:block>

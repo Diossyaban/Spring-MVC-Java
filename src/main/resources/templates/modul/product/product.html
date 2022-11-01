@@ -1,0 +1,52 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:with="http://www.thymeleaf.org/extras/with" layout:decorate="~{layout}" with:title="'jbootcamp'">
+<th:block layout:fragment="content">
+
+    <section id="cart_items">
+        <div class="container">
+            <div class="breadcrumbs">
+                <ol class="breadcrumb">
+                    <li><a href="/">Home</a></li>
+                    <li class="active">Product</li>
+                </ol>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a th:href="@{/product/add}"><i class="fa fa-plus"></i> Add</a></li>
+            </ul>
+            <div class="table-responsive cart_info">
+                <h7 th:text="${message}" class="text-info"></h7>
+                <table class="table table-condensed">
+                    <thead>
+                        <tr class="cart_menu">
+                            <td class="image">Item</td>
+                            <td class="description">Title</td>
+                            <td class="description">Description</td>
+                            <td class="price">Price</td>
+                            <td class="price">Stock</td>
+                            <td class="description">Condition</td>
+                            <td class="description">Category</td>
+                            <td class="text-center">Action</td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="prod: ${products}">
+                            <td class="cart_product">
+                                <a th:href="@{edit/{id}(id=${prod.prodId})}"><img style="width: 80px;height: 80px" th:src="@{/product/files/{filename}(filename=${prod.productImage})}" alt=""></a>
+                            </td>
+                            <td class="product-des" th:text="${prod.title}"></td>
+                            <td class="product-des" th:text="${prod.description}"></td>
+                            <td class="price" th:text="${#numbers.formatCurrency(prod.price)}"></td>
+                            <td class="product-des text-center" data-title="Description" th:text="${prod.stock}"></td>
+                            <td class="product-des" th:text="${prod.conditionType}"></td>
+                            <td class="product-des" th:text="${prod.category.cateName}"></td>
+                            <td class="cart_delete">
+                                <a class="cart_quantity_delete" th:href="@{delete/{id}(id=${prod.prodId})}"><i
+										class="fa fa-times"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</th:block>

@@ -14,6 +14,7 @@ public class IndexController {
     
     @GetMapping("/")
     public String showIndex(Model model){
+        model.addAttribute("isHome", true);
         model.addAttribute("title", "Hello Daniel Dewanto");
         return "index";
     }

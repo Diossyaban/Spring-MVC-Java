@@ -1,0 +1,26 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:with="http://www.thymeleaf.org/extras/with" layout:decorate="~{layout}" with:title="jbootcamp">
+<th:block layout:fragment="content">
+    <div class="features_items">
+        <!--features_items-->
+        <h2 class="title text-center">Features Items</h2>
+        <div class="col-sm-4" th:each="prod,rowCount: ${bycategories}">
+            <div class="product-image-wrapper">
+                <div class="single-products">
+                    <div class="productinfo text-center">
+                        <img style="width: 255px;height: 237px" th:src="@{/product/files/{filename}(filename=${prod.productImage})}" alt="">
+                        <h2 th:text="Rp.+ ${#numbers.formatDecimal(prod.price,1, 'DEFAULT', 0, 'DEFAULT')}">$56</h2>
+                        <p th:text="${prod.title}">Easy Polo Black Edition</p>
+                    </div>
+                    <div class="product-overlay">
+                        <div class="overlay-content">
+                            <h2 th:text="Rp.+ ${#numbers.formatDecimal(prod.price,1, 'DEFAULT', 0, 'DEFAULT')}">$56</h2>
+                            <p th:text="${prod.title}">Easy Polo Black Edition</p>
+                            <a th:href="@{/product/detail/{id}(id=${prod.prodId})}" class="btn btn-default add-to-cart"><i class="fa fa-info-circle"></i>Detail</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+</th:block>
