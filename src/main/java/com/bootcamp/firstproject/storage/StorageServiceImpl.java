@@ -102,5 +102,25 @@ public class StorageServiceImpl implements StorageService{
         FileSystemUtils.deleteRecursively(rootLocation.toFile());
         
     }
+
+	@Override
+	public String storeFile(MultipartFile file) {
+		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+
+        try {
+            // Check if the file's name contains invalid characters
+            if(fileName.contains("..")) {
+                throw new StorageException("Sorry! Filename contains invalid path sequence " + fileName);
+            }
+
+            // Copy file to the target location (Replacing existing file with the same name)
+            Path targetLocation = this.rootLocation.resolve(fileName);
+            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+            return fileName;
+        } catch (IOException ex) {
+            throw new StorageException("Could not store file " + fileName + ". Please try again!", ex);
+        }
+	}
     
 }

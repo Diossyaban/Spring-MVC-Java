@@ -1,6 +1,10 @@
 package com.bootcamp.firstproject.controller;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -9,7 +13,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,18 +24,22 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.bootcamp.firstproject.model.Product;
 import com.bootcamp.firstproject.service.CategoryService;
 import com.bootcamp.firstproject.service.ProductService;
 import com.bootcamp.firstproject.storage.StorageService;
+import com.bootcamp.firstproject.storage.UploadFileResponse;
 
-// @Controller
-@RestController
+@Controller
+// @RestController
 @RequestMapping("/product")
 public class ProductController {
 
@@ -78,6 +88,7 @@ public class ProductController {
     }
 
     // Method Spring MVC
+    // add product with product image in MVC
     // @PostMapping("add")
     // public String postProduct(@Valid Product product, BindingResult result,
     //         RedirectAttributes redirectAttrs, @RequestParam("file") MultipartFile file) {
@@ -93,6 +104,7 @@ public class ProductController {
 
 
     // method REST API
+    // add product without image product
     @PostMapping("add")
     public String postProduct(@RequestBody Product product, BindingResult result,
             RedirectAttributes redirectAttrs) {
@@ -105,6 +117,28 @@ public class ProductController {
         return "redirect:/product/";
     }
 
+    // add product with image product
+    @PostMapping("/addMultipart" )
+    public ResponseEntity<?> addProductMultipart(Product product, @RequestParam("file") MultipartFile file) {
+
+        try {
+            String fileName = storService.storeFile(file);
+            Product prod = product;
+            if (fileName.contains(".")) {
+                String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                        .path("/product/downloadFile/").path(fileName).toUriString();
+                        
+                prod.setProductImage(fileDownloadUri);
+            }
+            return ResponseEntity.ok().body(prodService.addProduct(prod, file.getOriginalFilename()));
+
+        } catch (Exception e) {
+            // TODO: handle exception
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
+    }
+
     @GetMapping("/files/{filename:.+}")
     @ResponseBody
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
@@ -113,6 +147,44 @@ public class ProductController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
                 .body(file);
+    }
+
+    @PostMapping("/uploadFile")
+    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file){
+        String fileName = storService.storeFile(file);
+
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/product/downloadFile/")
+                .path(fileName).toUriString();
+
+        return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
+    }
+
+    @GetMapping("/downloadFile/{fileName:.+}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
+        // Load file as Resource
+        Resource resource = storService.loadAsResource(fileName);
+
+        // Try to determine file's content type
+        String contentType = null;
+        try {
+            contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+        } catch (IOException ex) {
+           //
+        }
+
+        // Fallback to the default content type if type could not be determined
+        if (contentType == null) {
+            contentType = "application/octet-stream";
+        }
+
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
+    }
+
+    @PostMapping("/uploadMultipleFiles")
+    public List<UploadFileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
+        return Arrays.asList(files).stream().map(file -> uploadFile(file)).collect(Collectors.toList());
     }
 
     @GetMapping("edit/{id}")
