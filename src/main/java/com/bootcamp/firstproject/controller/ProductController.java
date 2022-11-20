@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +63,7 @@ public class ProductController {
         this.storService = storageService;
     }
 
+
     // @GetMapping("/")
     @GetMapping("/")
     public String showProduct(Model model) {
@@ -72,6 +74,7 @@ public class ProductController {
 
     @GetMapping("/bycategory/{id}")
     public String showProducts(Model model, @PathVariable("id") Long cateId) {
+        // pathvariable untuk mengambil id dari category yang mau dishow
         model.addAttribute("isHome", true);
         model.addAttribute("categories", cateService.findAllCategory());
         model.addAttribute("bycategories", prodService.findProductById(cateId));
@@ -89,23 +92,23 @@ public class ProductController {
 
     // Method Spring MVC
     // add product with product image in MVC
-    // @PostMapping("add")
-    // public String postProduct(@Valid Product product, BindingResult result,
-    //         RedirectAttributes redirectAttrs, @RequestParam("file") MultipartFile file) {
-    //     if (result.hasErrors()) {
-    //         return "modul/product/addEdit.html";
-    //     }
-    //     storService.store(file);
-    //     prodService.addProduct(product, file.getOriginalFilename());
-    //     redirectAttrs.addFlashAttribute("message", "product " + product.getTitle() +
-    //             " created.");
-    //     return "redirect:/product/";
-    // }
+     @PostMapping("add")
+     public String postProduct(@Valid Product product, BindingResult result,
+                               RedirectAttributes redirectAttrs, @RequestParam("file") MultipartFile file) {
+         if (result.hasErrors()) {
+             return "modul/product/addEdit.html";
+         }
+         storService.store(file);
+         prodService.addProduct(product, file.getOriginalFilename());
+         redirectAttrs.addFlashAttribute("message", "product " + product.getTitle() +
+                 " created.");
+         return "redirect:/product/";
+     }
 
 
     // method REST API
     // add product without image product
-    @PostMapping("add")
+    /*@PostMapping("add")
     public String postProduct(@RequestBody Product product, BindingResult result,
             RedirectAttributes redirectAttrs) {
         if (result.hasErrors()) {
@@ -115,7 +118,7 @@ public class ProductController {
         redirectAttrs.addFlashAttribute("message", "product " + product.getTitle() +
                 " created.");
         return "redirect:/product/";
-    }
+    }*/
 
     // add product with image product
     @PostMapping("/addMultipart" )

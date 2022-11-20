@@ -50,5 +50,6 @@ public class Category {
         this.cateName = cateName;
     }
 
+
     
 }
