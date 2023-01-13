@@ -123,7 +123,7 @@ public class ProductController {
     // add product with image product
     @PostMapping("/addMultipart" )
     public ResponseEntity<?> addProductMultipart(Product product, @RequestParam("file") MultipartFile file) {
-        System.out.println("test");
+
         try {
             String fileName = storService.storeFile(file);
             Product prod = product;
